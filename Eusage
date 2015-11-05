@@ -1,0 +1,90 @@
+#!/usr/bin/python
+import sys
+import os
+import pickle
+import time
+HOME=;
+class FromTo:
+	def __init__(self,frm,to,day):
+		self.frm=frm;
+		self.to=to;
+		self.refresh_day=day;
+def Reset():
+	confirm=raw_input("Are you sure you want to reset (y for yes):");
+	if(confirm=="y"):
+		fp=open(HOME+"/.usage/Current","w");
+		fp.write("0");
+		fp.close();
+		fp=open(HOME+"/.usage/Total","w");
+		fp.write("0");
+		fp.close();
+def Settime():
+	from_time=int(raw_input("Enter the starting hour of free usage(eg :130 for 1:30 am) : \n"))
+	to_time=int(raw_input("Enter the ending hour of free usage(eg :130 for 1:30 am) : \n"))
+	day=int(raw_input("Enter the day of month in which the values has to be refreshed : \n"))
+	fp=open(HOME+"/.usage/Freetime","w");
+	freetime=FromTo(from_time,to_time,day)
+	os.system("bash Resetcron "+str(day));	
+	pickle.dump(freetime,fp)
+	fp.close()
+def Usage():
+	fp=open(HOME+"/.usage/Current","r");
+	usage=int(fp.read());
+	fp.close();
+	fp=open(HOME+"/.usage/Total","r");
+	usage=usage+int(fp.read());
+	fp.close();
+	usage=Format_usage(usage);
+	print usage
+def Format_usage(usage):
+	s=1000000000;
+	while(s>1):
+		if((usage/s)>1):
+			if(s==1000000000):
+				return str((float)(usage)/s)+" GB";
+			elif(s==1000000):
+				return str((float)(usage)/s)+" MB";
+			elif(s==1000):
+				return str((float)(usage)/s)+" KB";
+			else :
+				return str((float)(usage)/s)+" B";
+		s=s/1000;
+def History(month,year):
+	fp=open(HOME+"/.usage/History")
+	block=fp.readlines()
+	for line in block:
+		if(line.startswith(year+" : "+month)):
+			y,m,usage=line.split(":")
+			usage=int(usage);
+			break;
+	fp.close()
+	try:
+		print "Usage for "+month+"-"+year+" is "+Format_usage(usage);
+	except UnboundLocalError:
+		print "No record for the date"	
+def Help():
+	print "-c for changing the settings\
+	       -h for help\
+	       -u for usage info\
+	       -r for reset\
+		-H month year for returning the usage value of that month in given year"
+try:
+	sys.argv[1]
+except IndexError :
+	Help()
+	sys.exit()
+if(sys.argv[1]=="-r"):
+	Reset();
+elif(sys.argv[1]=="-u"):
+	Usage();
+elif(sys.argv[1]=="-c"):
+	Settime();
+elif(sys.argv[1]=="-H"):
+	try:
+		History(sys.argv[2],sys.argv[3])
+	except IndexError:
+		Help()
+elif(sys.argv[1]=="-h"):
+	print Help()
+else:
+	Help()

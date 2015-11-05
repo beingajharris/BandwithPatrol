@@ -1,0 +1,6 @@
+This is a tool for monitoring internet usage for a month on a Linux system (I have tested it on Ubuntu 10.10 & 11.04). The main scripts are written in Python. You can install it by downlaoding and then running Installer.sh script. Restarting is required after installation.After installation you may use the following:
+
+Eusage -h            : for help
+Eusage -r            : for resetting
+Eusage -c            : for changing the free usage time and auto reset date
+Eusage -H month year :(both in digits) for getting usage history of given month in a specified year

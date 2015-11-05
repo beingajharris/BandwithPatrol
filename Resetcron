@@ -1,0 +1,4 @@
+#!/bin/bash
+crontab -l  >temp
+sed -i 's|0 0 [1-31] \* \* '$HOME'/.usage/Reset|0\ 0\ '$1'\ \*\ \*\ '$HOME'/.usage/Reset|' temp;
+crontab temp

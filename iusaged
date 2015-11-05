@@ -1,0 +1,63 @@
+#!/usr/bin/python
+import os
+import time
+import pickle
+HOME=;
+class FromTo:
+	def __init__(self,frm,to):
+		self.frm=frm;
+		self.to=to;
+def Freetime():
+	freetime=FromTo(0,0);
+	fp=open(HOME+"/.usage/Freetime","r");
+	freetime=pickle.load(fp);
+	fp.close()
+	t=time.localtime()
+	C=t.tm_hour*100+t.tm_min
+	if(freetime.frm > freetime.to):
+		if(freetime.frm<C and C<2359 or 0<C and C<freetime.to):
+			return 1
+	elif(freetime.frm <C and C< freetime.to):
+		return 1;
+	else:
+		return 0	
+def current_usage():
+	fp=open("/proc/net/dev","r");
+	c=fp.readlines()
+	usage=0;
+	for i in c:
+        	k=0
+		if i.__contains__("eth0:") or i.__contains__("eth1:"):
+        	       for j in i.split():
+				if(k==1 or k==9):
+					usage=int(usage)+int(j);
+				k=k+1;       	
+	return usage
+def addCurrentWithTotal():
+	fp=open(HOME+"/.usage/Total","r");
+	Total=fp.read()
+	Total=Total.strip()
+	Total=int(Total)
+	ft=open(HOME+"/.usage/Current","r");
+	Current=ft.read().strip()
+	Current=int(Current)
+	Total=Total+Current
+	Total=str(Total)
+	fp.close()
+	fp=open(HOME+"/.usage/Total","w");
+	fp.write(Total)
+	fp.close()
+	ft.close()
+	ft=open(HOME+"/.usage/Current","w");
+	ft.write("0");
+	ft.close()
+addCurrentWithTotal();
+while(1):
+	Current_Total=current_usage();
+	fp=open(HOME+"/.usage/Current","w");
+	if(Freetime()==0):
+		fp.write(str(Current_Total))
+	else
+		fp.write("0")
+	fp.close()
+	time.sleep(10)

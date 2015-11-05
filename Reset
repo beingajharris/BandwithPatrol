@@ -1,0 +1,22 @@
+#!/usr/bin/python
+import time
+HOME=
+def reset():
+	fp=open(HOME+"/.usage/Current","w");
+	fp.write("0");
+	fp.close();
+	fp=open(HOME+"/.usage/Total","w");
+	fp.write("0");
+	fp.close();
+def addToHistory():
+	fp=open(HOME+"/.usage/Total","r");
+	usage=fp.read();
+	fp.close()
+	fp=open(HOME+"/.usage/History","a");
+	t=time.localtime();
+	if(t.tm_mon==1):
+		fp.write(str(t.tm_year-1)+" : 12 "+" : "+str(usage)+"\n");
+	else:
+		fp.write(str(t.tm_year)+" : "+str(t.tm_mon)+" : "+str(usage)+"\n");
+reset()
+addToHistory();

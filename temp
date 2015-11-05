@@ -1,0 +1,4 @@
+@reboot /root/.usage/iusaged
+0 0 1 * * /root/.usage/Reset
+@reboot /root/.usage/iusaged
+0 0 1 * * /root/.usage/Reset
